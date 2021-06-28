@@ -15,7 +15,7 @@ after_success:
   - docker build -t meegossh/multi-nginx ./nginx
   - docker build -t meegossh/multi-server ./server
   - docker build -t meegossh/multi-worker ./worker
-  
+
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
@@ -24,3 +24,15 @@ after_success:
   - docker push meegossh/multi-nginx
   - docker push meegossh/multi-server
   - docker push meegossh/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-west-2'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-us-west-2-397781573921'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
